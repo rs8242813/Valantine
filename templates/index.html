@@ -74,8 +74,8 @@ video {
 
 <body>
 
-<!-- Tap to start (required for music) -->
-<div id="overlay">❤️ Tap to start ❤️</div>
+<!-- Tap to start -->
+<div id="overlay" onclick="startExperience()">❤️ Tap to start ❤️</div>
 
 <div class="container">
   <div class="card">
@@ -88,32 +88,47 @@ video {
 
     <p id="msg"></p>
 
-    <video id="vid" controls>
+    <video id="vid" controls playsinline>
       <source src="{{ url_for('static', filename='video.mp4') }}" type="video/mp4">
     </video>
   </div>
 </div>
 
-<audio id="music" loop>
+<audio id="music" loop preload="auto">
   <source src="{{ url_for('static', filename='music.mp3') }}" type="audio/mpeg">
 </audio>
 
 <script>
 const music = document.getElementById("music");
-const overlay = document.getElementById("overlay");
 const video = document.getElementById("vid");
 let scale = 1;
 
-// Start music safely
-overlay.onclick = function () {
-    music.play();
-    overlay.style.display = "none";
-};
+function startExperience() {
+    // try to unlock audio
+    music.muted = false;
+    music.play().catch(() => {
+        console.log("Audio will start on next interaction");
+    });
 
-// YES button
+    // hide overlay no matter what
+    document.getElementById("overlay").style.display = "none";
+}
+
 function yesClick() {
     document.getElementById("msg").innerText = "I knew it 😍❤️";
     video.style.display = "block";
     video.play();
+
     document.getElementById("yes").style.display = "none";
-    document.getElementById("no").style.disp
+    document.getElementById("no").style.display = "none";
+}
+
+function noClick() {
+    scale += 0.2;
+    document.getElementById("yes").style.transform = "scale(" + scale + ")";
+    document.getElementById("msg").innerText = "Try again 😏";
+}
+</script>
+
+</body>
+</html>

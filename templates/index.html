@@ -7,126 +7,157 @@
 
 <style>
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #ff5f9e, #ff8fb1);
-    color: white;
-    text-align: center;
-}
-
-.container {
-    padding: 20px;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ff5f9e, #ff8fb1);
+  color: white;
+  text-align: center;
+  overflow: hidden;
 }
 
 .card {
-    background: rgba(255,255,255,0.2);
-    border-radius: 20px;
-    padding: 20px;
-    display: inline-block;
-    margin-top: 30px;
+  background: rgba(255,255,255,0.22);
+  border-radius: 25px;
+  padding: 25px;
+  margin: 40px auto;
+  width: fit-content;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.35);
 }
 
 img {
-    width: 250px;
-    border-radius: 15px;
+  width: 260px;
+  border-radius: 18px;
+}
+
+h2 {
+  margin-top: 15px;
 }
 
 button {
-    padding: 12px 25px;
-    font-size: 18px;
-    border: none;
-    border-radius: 30px;
-    margin: 10px;
-    cursor: pointer;
+  padding: 14px 30px;
+  font-size: 18px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  margin: 10px;
+}
+
+#start {
+  background: #ff2e63;
+  color: white;
 }
 
 #yes {
-    background: #ff2e63;
-    color: white;
+  background: #ff2e63;
+  color: white;
 }
 
 #no {
-    background: white;
-    color: #ff2e63;
+  background: white;
+  color: #ff2e63;
 }
 
 video {
-    width: 90%;
-    max-width: 400px;
-    display: none;
-    margin-top: 15px;
-    border-radius: 15px;
+  width: 90%;
+  max-width: 420px;
+  margin-top: 15px;
+  border-radius: 18px;
+  display: none;
 }
 
-#overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    z-index: 9999;
-    cursor: pointer;
+/* floating hearts */
+.heart {
+  position: fixed;
+  bottom: -20px;
+  font-size: 22px;
+  animation: floatUp 6s linear infinite;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-120vh); opacity: 0; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- Tap to start -->
-<div id="overlay" onclick="startExperience()">❤️ Tap to start ❤️</div>
+<div class="card">
+  <img src="{{ url_for('static', filename='photo.jpg') }}" alt="Us ❤️">
 
-<div class="container">
-  <div class="card">
-    <img src="{{ url_for('static', filename='photo.jpg') }}" alt="Us">
+  <h2 id="title">Will you be my Valentine? 💖</h2>
+  <p id="msg">Tap start first ❤️</p>
 
-    <h2>Will you be my Valentine? 💖</h2>
+  <!-- START button -->
+  <button id="start">START ❤️</button>
 
-    <button id="yes" onclick="yesClick()">YES ❤️</button>
-    <button id="no" onclick="noClick()">NO 🙈</button>
-
-    <p id="msg"></p>
-
-    <video id="vid" controls playsinline>
-      <source src="{{ url_for('static', filename='video.mp4') }}" type="video/mp4">
-    </video>
+  <!-- YES / NO -->
+  <div id="choices" style="display:none;">
+    <button id="yes">YES 💕</button>
+    <button id="no">NO 🙈</button>
   </div>
+
+  <!-- Video -->
+  <video id="vid" controls playsinline>
+    <source src="{{ url_for('static', filename='video.mp4') }}" type="video/mp4">
+  </video>
 </div>
 
-<audio id="music" loop preload="auto">
+<!-- Music -->
+<audio id="music" loop>
   <source src="{{ url_for('static', filename='music.mp3') }}" type="audio/mpeg">
 </audio>
 
 <script>
+const startBtn = document.getElementById("start");
+const yesBtn = document.getElementById("yes");
+const noBtn = document.getElementById("no");
+const choices = document.getElementById("choices");
 const music = document.getElementById("music");
 const video = document.getElementById("vid");
-let scale = 1;
+const msg = document.getElementById("msg");
 
-function startExperience() {
-    // try to unlock audio
-    music.muted = false;
-    music.play().catch(() => {
-        console.log("Audio will start on next interaction");
-    });
+let yesScale = 1;
 
-    // hide overlay no matter what
-    document.getElementById("overlay").style.display = "none";
-}
+/* START */
+startBtn.onclick = () => {
+  music.play();
+  startBtn.style.display = "none";
+  choices.style.display = "block";
+  msg.innerText = "Now choose wisely 😏";
+};
 
-function yesClick() {
-    document.getElementById("msg").innerText = "I knew it 😍❤️";
-    video.style.display = "block";
-    video.play();
+/* YES */
+yesBtn.onclick = () => {
+  msg.innerText = "I knew it 😍❤️";
+  video.style.display = "block";
+  video.play();
 
-    document.getElementById("yes").style.display = "none";
-    document.getElementById("no").style.display = "none";
-}
+  yesScale += 0.1;
+  yesBtn.style.transform = `scale(${yesScale})`;
 
-function noClick() {
-    scale += 0.2;
-    document.getElementById("yes").style.transform = "scale(" + scale + ")";
-    document.getElementById("msg").innerText = "Try again 😏";
+  makeHearts();
+};
+
+/* NO */
+noBtn.onclick = () => {
+  yesScale += 0.25;
+  yesBtn.style.transform = `scale(${yesScale})`;
+  msg.innerText = "Nice try 😏 Try again...";
+};
+
+/* Hearts explosion */
+function makeHearts() {
+  for (let i = 0; i < 45; i++) {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 6000);
+  }
 }
 </script>
 

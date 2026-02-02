@@ -8,58 +8,71 @@
 <style>
 body {
     margin: 0;
-    height: 100vh;
     font-family: 'Segoe UI', sans-serif;
     background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    text-align: center;
+    color: white;
     overflow: hidden;
 }
 
 .container {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    padding: 20px;
+    margin-top: 30px;
 }
 
 .card {
     background: rgba(255,255,255,0.15);
     backdrop-filter: blur(10px);
     border-radius: 25px;
-    padding: 30px;
-    text-align: center;
-    color: white;
+    padding: 25px;
+    display: inline-block;
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
 
-.card img {
-    width: 280px;
+img {
+    width: 260px;
     border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
 }
 
 h1 {
-    margin: 20px 0 10px;
-    font-size: 2.3em;
+    margin-top: 15px;
 }
 
-p {
-    font-size: 1.4em;
+.buttons {
+    margin-top: 20px;
 }
 
-/* Floating hearts */
-.heart {
-    position: absolute;
-    bottom: -20px;
-    color: rgba(255,255,255,0.8);
-    animation: floatUp 6s infinite;
-    font-size: 20px;
+button {
+    font-size: 1.2em;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 30px;
+    margin: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-@keyframes floatUp {
-    0% { transform: translateY(0); opacity: 1; }
-    100% { transform: translateY(-110vh); opacity: 0; }
+#yesBtn {
+    background: #ff2e63;
+    color: white;
+}
+
+#noBtn {
+    background: #ffffff;
+    color: #ff2e63;
+}
+
+#message {
+    margin-top: 15px;
+    font-size: 1.2em;
+}
+
+video {
+    display: none;
+    width: 90%;
+    max-width: 400px;
+    margin-top: 20px;
+    border-radius: 20px;
 }
 </style>
 </head>
@@ -67,24 +80,41 @@ p {
 <body>
 
 <div class="container">
-    <div class="card">
-        <img src="{{ url_for('static', filename='photo.jpg') }}" alt="Us ❤️">
-        <h1>I love you ❤️</h1>
-        <p>Will you be my Valentine, always?</p>
+  <div class="card">
+    <img src="{{ url_for('static', filename='photo.jpg') }}" alt="Us ❤️">
+    <h1>Will you be my Valentine? 💖</h1>
+
+    <div class="buttons">
+      <button id="yesBtn" onclick="yesClick()">YES 💕</button>
+      <button id="noBtn" onclick="noClick()">NO 🙈</button>
     </div>
+
+    <div id="message"></div>
+
+    <video id="video" controls>
+      <source src="{{ url_for('static', filename='valentine.mp4') }}" type="video/mp4">
+      Your browser does not support video.
+    </video>
+  </div>
 </div>
 
 <script>
-for (let i = 0; i < 25; i++) {
-    let heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerHTML = "❤️";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
-    document.body.appendChild(heart);
+let yesSize = 1;
+
+function yesClick() {
+    document.getElementById("video").style.display = "block";
+    document.getElementById("video").play();
+    document.getElementById("message").innerHTML = "I knew it ❤️💖";
+    document.getElementById("yesBtn").style.display = "none";
+    document.getElementById("noBtn").style.display = "none";
+}
+
+function noClick() {
+    yesSize += 0.3;
+    document.getElementById("yesBtn").style.transform = `scale(${yesSize})`;
+    document.getElementById("message").innerHTML = "Oops 😅 try again...";
 }
 </script>
 
 </body>
 </html>
-

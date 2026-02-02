@@ -78,7 +78,7 @@ video {
     border-radius: 20px;
 }
 
-/* floating hearts */
+/* Floating hearts */
 .heart {
     position: absolute;
     bottom: -20px;
@@ -90,73 +90,12 @@ video {
     0% { transform: translateY(0); opacity: 1; }
     100% { transform: translateY(-120vh); opacity: 0; }
 }
-</style>
-</head>
 
-<body>
-
-<div class="container">
-  <div class="card">
-    <img src="{{ url_for('static', filename='photo.jpg') }}" alt="Us ❤️">
-    <h1>Will you be my Valentine? 💖</h1>
-
-    <div class="buttons">
-      <button id="yesBtn" onclick="yesClick()">YES 💕</button>
-      <button id="noBtn" onclick="noClick()">NO 🙈</button>
-    </div>
-
-    <div id="message"></div>
-
-    <video id="video" controls>
-      <source src="{{ url_for('static', filename='valentine.mp4') }}" type="video/mp4">
-    </video>
-  </div>
-</div>
-
-<audio id="music" loop>
-  <source src="{{ url_for('static', filename='music.mp3') }}" type="audio/mpeg">
-</audio>
-
-<script>
-let yesScale = 1;
-
-function yesClick() {
-    document.getElementById("video").style.display = "block";
-    document.getElementById("video").play();
-
-    document.getElementById("music").play();
-
-    document.getElementById("message").innerHTML = "I knew it 😍❤️";
-
-    document.getElementById("yesBtn").style.display = "none";
-    document.getElementById("noBtn").style.display = "none";
-
-    confetti();
-}
-
-function noClick() {
-    yesScale += 0.3;
-    const yesBtn = document.getElementById("yesBtn");
-    yesBtn.style.transform = `scale(${yesScale})`;
-
-    const noBtn = document.getElementById("noBtn");
-    noBtn.style.left = Math.random() * 200 + "px";
-    noBtn.style.top = Math.random() * 80 + "px";
-
-    document.getElementById("message").innerHTML = "Nice try 😏 Try again...";
-}
-
-function confetti() {
-    for (let i = 0; i < 40; i++) {
-        let heart = document.createElement("div");
-        heart.className = "heart";
-        heart.innerHTML = "❤️";
-        heart.style.left = Math.random() * 100 + "vw";
-        heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
-        document.body.appendChild(heart);
-    }
-}
-</script>
-
-</body>
-</html>
+/* Tap overlay */
+#overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    display: flex;
+    align-items: c

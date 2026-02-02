@@ -9,24 +9,25 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    background: linear-gradient(135deg, #ff5f9e, #ff8fb1);
     text-align: center;
     color: white;
     overflow: hidden;
 }
 
 .container {
-    padding: 20px;
+    padding: 25px;
     margin-top: 30px;
 }
 
 .card {
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(10px);
-    border-radius: 25px;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(12px);
+    border-radius: 30px;
     padding: 25px;
     display: inline-block;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.35);
+    position: relative;
 }
 
 img {
@@ -35,16 +36,17 @@ img {
 }
 
 h1 {
-    margin-top: 15px;
+    margin: 15px 0;
 }
 
 .buttons {
     margin-top: 20px;
+    position: relative;
 }
 
 button {
     font-size: 1.2em;
-    padding: 12px 25px;
+    padding: 12px 28px;
     border: none;
     border-radius: 30px;
     margin: 10px;
@@ -58,21 +60,35 @@ button {
 }
 
 #noBtn {
-    background: #ffffff;
+    background: white;
     color: #ff2e63;
+    position: absolute;
 }
 
 #message {
     margin-top: 15px;
-    font-size: 1.2em;
+    font-size: 1.3em;
 }
 
 video {
     display: none;
     width: 90%;
-    max-width: 400px;
+    max-width: 420px;
     margin-top: 20px;
     border-radius: 20px;
+}
+
+/* floating hearts */
+.heart {
+    position: absolute;
+    bottom: -20px;
+    animation: floatUp 6s linear infinite;
+    font-size: 22px;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-120vh); opacity: 0; }
 }
 </style>
 </head>
@@ -93,26 +109,52 @@ video {
 
     <video id="video" controls>
       <source src="{{ url_for('static', filename='valentine.mp4') }}" type="video/mp4">
-      Your browser does not support video.
     </video>
   </div>
 </div>
 
+<audio id="music" loop>
+  <source src="{{ url_for('static', filename='music.mp3') }}" type="audio/mpeg">
+</audio>
+
 <script>
-let yesSize = 1;
+let yesScale = 1;
 
 function yesClick() {
     document.getElementById("video").style.display = "block";
     document.getElementById("video").play();
-    document.getElementById("message").innerHTML = "I knew it ❤️💖";
+
+    document.getElementById("music").play();
+
+    document.getElementById("message").innerHTML = "I knew it 😍❤️";
+
     document.getElementById("yesBtn").style.display = "none";
     document.getElementById("noBtn").style.display = "none";
+
+    confetti();
 }
 
 function noClick() {
-    yesSize += 0.3;
-    document.getElementById("yesBtn").style.transform = `scale(${yesSize})`;
-    document.getElementById("message").innerHTML = "Oops 😅 try again...";
+    yesScale += 0.3;
+    const yesBtn = document.getElementById("yesBtn");
+    yesBtn.style.transform = `scale(${yesScale})`;
+
+    const noBtn = document.getElementById("noBtn");
+    noBtn.style.left = Math.random() * 200 + "px";
+    noBtn.style.top = Math.random() * 80 + "px";
+
+    document.getElementById("message").innerHTML = "Nice try 😏 Try again...";
+}
+
+function confetti() {
+    for (let i = 0; i < 40; i++) {
+        let heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerHTML = "❤️";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
+        document.body.appendChild(heart);
+    }
 }
 </script>
 

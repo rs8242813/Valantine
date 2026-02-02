@@ -28,7 +28,13 @@ body{
 }
 .hidden{display:none}
 h1{margin-bottom:10px}
-p{margin-bottom:15px;font-size:16px}
+p{margin-bottom:12px;font-size:16px}
+
+.feedback{
+  font-size:15px;
+  margin:10px 0;
+  color:#ffecec;
+}
 
 button{
   padding:12px 22px;
@@ -45,16 +51,12 @@ button{
 img{
   width:200px;
   border-radius:20px;
-  margin-bottom:15px;
+  margin-bottom:12px;
 }
 
-input[type=range]{
-  width:100%;
-}
+input[type=range]{width:100%}
 
-.shake{
-  animation:shake 0.4s;
-}
+.shake{animation:shake 0.4s}
 @keyframes shake{
   0%{transform:translateX(0)}
   25%{transform:translateX(-5px)}
@@ -63,9 +65,7 @@ input[type=range]{
   100%{transform:translateX(0)}
 }
 
-.glow{
-  box-shadow:0 0 20px #00ff9d;
-}
+.glow{box-shadow:0 0 20px #00ff9d}
 </style>
 </head>
 
@@ -88,20 +88,23 @@ input[type=range]{
   <p>How much do you love me? 😌</p>
   <input type="range" min="0" max="100" value="50" id="loveRange">
   <p id="rangeText">50%</p>
+  <div class="feedback" id="rangeFeedback"></div>
   <button class="primary" onclick="go3()">Next ❤️</button>
 </div>
 
 <!-- SCREEN 3 -->
 <div class="card hidden" id="s3">
   <h1>Choose one 😏</h1>
-  <button class="secondary" onclick="chooseGood()">Forever 💖</button>
-  <button class="secondary" onclick="chooseGood()">Always ❤️</button>
+  <div class="feedback" id="choiceFeedback"></div>
+  <button class="secondary" onclick="chooseGood('Forever')">Forever 💖</button>
+  <button class="secondary" onclick="chooseGood('Always')">Always ❤️</button>
   <button class="secondary" onclick="chooseBad()">Hmm… 🤔</button>
 </div>
 
 <!-- SCREEN 4 -->
 <div class="card hidden" id="s4">
   <h1>Will you be my Valentine? 💍</h1>
+  <div class="feedback" id="valFeedback"></div>
   <button id="yes" class="primary glow" onclick="go5()">YES 💖</button>
   <button id="no" class="secondary" onclick="shakeNo()">NO 🙈</button>
 </div>
@@ -112,16 +115,21 @@ input[type=range]{
   <video width="100%" controls autoplay>
     <source src="{{ url_for('static', filename='video.MP4') }}" type="video/mp4">
   </video>
-  <p>You are my today, tomorrow & forever ❤️</p>
+  <p>You just made my heart the happiest ❤️</p>
 </div>
 
 <script>
 const range = document.getElementById("loveRange");
 const text = document.getElementById("rangeText");
+const feedback = document.getElementById("rangeFeedback");
 
-if(range){
-  range.oninput = () => text.innerText = range.value + "%";
-}
+range.oninput = () => {
+  text.innerText = range.value + "%";
+  if(range.value < 40) feedback.innerText = "Hmm… I expected more 😏";
+  else if(range.value < 70) feedback.innerText = "Okay okay… that’s sweet 😊";
+  else if(range.value < 90) feedback.innerText = "Awww, that’s a lot of love ❤️";
+  else feedback.innerText = "OMG 😭 I’m the luckiest!";
+};
 
 function hideAll(){
   document.querySelectorAll(".card").forEach(c=>c.classList.add("hidden"));
@@ -136,17 +144,24 @@ function go3(){
   hideAll(); s3.classList.remove("hidden");
 }
 
-function chooseGood(){
-  hideAll(); s4.classList.remove("hidden");
+function chooseGood(choice){
+  document.getElementById("choiceFeedback").innerText =
+    choice === "Forever"
+    ? "Forever with you? Perfect answer 😍"
+    : "Always sounds romantic… I like it ❤️";
+  setTimeout(()=>{ hideAll(); s4.classList.remove("hidden"); },1200);
 }
 
 function chooseBad(){
-  alert("Wrong choice 😏 Try again!");
+  document.getElementById("choiceFeedback").innerText =
+    "Hmm?? 😤 Wrong option… try again!";
 }
 
 function shakeNo(){
   const no = document.getElementById("no");
   no.classList.add("shake");
+  document.getElementById("valFeedback").innerText =
+    "Heyyy 😳 don’t tease me like that!";
   setTimeout(()=>no.classList.remove("shake"),400);
 }
 

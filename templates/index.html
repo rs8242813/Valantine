@@ -2,162 +2,156 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My Valentine ❤️</title>
+<title>For My Valentine 💖</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #ff5f9e, #ff8fb1);
-  color: white;
-  text-align: center;
-  overflow: hidden;
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{
+  height:100vh;
+  background: radial-gradient(circle at top,#ff9aa2,#ff4d6d);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  overflow:hidden;
+}
+.card{
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(10px);
+  padding:25px;
+  border-radius:25px;
+  text-align:center;
+  width:90%;
+  max-width:360px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.3);
+}
+.hidden{display:none}
+h1{margin-bottom:10px}
+p{margin-bottom:15px;font-size:16px}
+
+button{
+  padding:12px 22px;
+  border:none;
+  border-radius:25px;
+  font-size:16px;
+  margin:8px;
+  cursor:pointer;
+  transition:0.3s;
+}
+.primary{background:#00ff9d;color:#000}
+.secondary{background:#fff;color:#000}
+
+img{
+  width:200px;
+  border-radius:20px;
+  margin-bottom:15px;
 }
 
-.card {
-  background: rgba(255,255,255,0.22);
-  border-radius: 25px;
-  padding: 25px;
-  margin: 40px auto;
-  width: fit-content;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+input[type=range]{
+  width:100%;
 }
 
-img {
-  width: 260px;
-  border-radius: 18px;
+.shake{
+  animation:shake 0.4s;
+}
+@keyframes shake{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-5px)}
+  50%{transform:translateX(5px)}
+  75%{transform:translateX(-5px)}
+  100%{transform:translateX(0)}
 }
 
-h2 {
-  margin-top: 15px;
-}
-
-button {
-  padding: 14px 30px;
-  font-size: 18px;
-  border-radius: 30px;
-  border: none;
-  cursor: pointer;
-  margin: 10px;
-}
-
-#start {
-  background: #ff2e63;
-  color: white;
-}
-
-#yes {
-  background: #ff2e63;
-  color: white;
-}
-
-#no {
-  background: white;
-  color: #ff2e63;
-}
-
-video {
-  width: 90%;
-  max-width: 420px;
-  margin-top: 15px;
-  border-radius: 18px;
-  display: none;
-}
-
-/* floating hearts */
-.heart {
-  position: fixed;
-  bottom: -20px;
-  font-size: 22px;
-  animation: floatUp 6s linear infinite;
-}
-
-@keyframes floatUp {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(-120vh); opacity: 0; }
+.glow{
+  box-shadow:0 0 20px #00ff9d;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
-  <img src="{{ url_for('static', filename='photo.jpg') }}" alt="Us ❤️">
-
-  <h2 id="title">Will you be my Valentine? 💖</h2>
-  <p id="msg">Tap start first ❤️</p>
-
-  <!-- START button -->
-  <button id="start">START ❤️</button>
-
-  <!-- YES / NO -->
-  <div id="choices" style="display:none;">
-    <button id="yes">YES 💕</button>
-    <button id="no">NO 🙈</button>
-  </div>
-
-  <!-- Video -->
-  <video id="vid" controls playsinline>
-    <source src="{{ url_for('static', filename='video.MP4') }}" type="video/mp4">
-  </video>
-</div>
-
-<!-- Music -->
 <audio id="music" loop>
-  <source src="{{ url_for('static', filename='music.mp3') }}" type="audio/mpeg">
+  <source src="{{ url_for('static', filename='music.mp3') }}" type="audio/mp3">
 </audio>
 
+<!-- SCREEN 1 -->
+<div class="card" id="s1">
+  <h1>💖 Hello My Love 💖</h1>
+  <p>A small surprise game just for you</p>
+  <button class="primary" onclick="go2()">Start 💫</button>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="card hidden" id="s2">
+  <img src="{{ url_for('static', filename='photo.jpg') }}">
+  <p>How much do you love me? 😌</p>
+  <input type="range" min="0" max="100" value="50" id="loveRange">
+  <p id="rangeText">50%</p>
+  <button class="primary" onclick="go3()">Next ❤️</button>
+</div>
+
+<!-- SCREEN 3 -->
+<div class="card hidden" id="s3">
+  <h1>Choose one 😏</h1>
+  <button class="secondary" onclick="chooseGood()">Forever 💖</button>
+  <button class="secondary" onclick="chooseGood()">Always ❤️</button>
+  <button class="secondary" onclick="chooseBad()">Hmm… 🤔</button>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="card hidden" id="s4">
+  <h1>Will you be my Valentine? 💍</h1>
+  <button id="yes" class="primary glow" onclick="go5()">YES 💖</button>
+  <button id="no" class="secondary" onclick="shakeNo()">NO 🙈</button>
+</div>
+
+<!-- SCREEN 5 -->
+<div class="card hidden" id="s5">
+  <h1>💝 I Love You 💝</h1>
+  <video width="100%" controls autoplay>
+    <source src="{{ url_for('static', filename='video.mp4') }}" type="video/mp4">
+  </video>
+  <p>You are my today, tomorrow & forever ❤️</p>
+</div>
+
 <script>
-const startBtn = document.getElementById("start");
-const yesBtn = document.getElementById("yes");
-const noBtn = document.getElementById("no");
-const choices = document.getElementById("choices");
-const music = document.getElementById("music");
-const video = document.getElementById("vid");
-const msg = document.getElementById("msg");
+const range = document.getElementById("loveRange");
+const text = document.getElementById("rangeText");
 
-let yesScale = 1;
+if(range){
+  range.oninput = () => text.innerText = range.value + "%";
+}
 
-/* START */
-startBtn.onclick = () => {
-  music.play();
-  startBtn.style.display = "none";
-  choices.style.display = "block";
-  msg.innerText = "Now choose wisely 😏";
-};
+function hideAll(){
+  document.querySelectorAll(".card").forEach(c=>c.classList.add("hidden"));
+}
 
-/* YES */
-yesBtn.onclick = () => {
-  msg.innerText = "I knew it 😍❤️";
-  video.style.display = "block";
-  video.play();
+function go2(){
+  document.getElementById("music").play();
+  hideAll(); s2.classList.remove("hidden");
+}
 
-  yesScale += 0.1;
-  yesBtn.style.transform = `scale(${yesScale})`;
+function go3(){
+  hideAll(); s3.classList.remove("hidden");
+}
 
-  makeHearts();
-};
+function chooseGood(){
+  hideAll(); s4.classList.remove("hidden");
+}
 
-/* NO */
-noBtn.onclick = () => {
-  yesScale += 0.25;
-  yesBtn.style.transform = `scale(${yesScale})`;
-  msg.innerText = "Nice try 😏 Try again...";
-};
+function chooseBad(){
+  alert("Wrong choice 😏 Try again!");
+}
 
-/* Hearts explosion */
-function makeHearts() {
-  for (let i = 0; i < 45; i++) {
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerText = "❤️";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
-    document.body.appendChild(heart);
+function shakeNo(){
+  const no = document.getElementById("no");
+  no.classList.add("shake");
+  setTimeout(()=>no.classList.remove("shake"),400);
+}
 
-    setTimeout(() => heart.remove(), 6000);
-  }
+function go5(){
+  hideAll(); s5.classList.remove("hidden");
 }
 </script>
 

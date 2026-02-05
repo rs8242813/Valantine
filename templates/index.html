@@ -8,33 +8,39 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
 body{
-  height:100vh;
-  background: radial-gradient(circle at top,#ff9aa2,#ff4d6d);
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  background:radial-gradient(circle at top,#ff9aa2,#ff4d6d);
   color:white;
-  overflow:hidden;
+  padding:20px;
 }
+
+/* 💘 Timeline */
+.timeline{
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(10px);
+  padding:15px;
+  border-radius:20px;
+  margin-bottom:20px;
+}
+.timeline h3{text-align:center;margin-bottom:10px}
+.timeline .day{margin:8px 0;font-size:15px}
+
+/* 💖 Cards */
 .card{
   background:rgba(255,255,255,0.15);
   backdrop-filter:blur(10px);
   padding:25px;
   border-radius:25px;
   text-align:center;
-  width:90%;
   max-width:360px;
+  margin:20px auto;
   box-shadow:0 20px 40px rgba(0,0,0,0.3);
 }
 .hidden{display:none}
+
 h1{margin-bottom:10px}
 p{margin-bottom:12px;font-size:16px}
 
-.feedback{
-  font-size:15px;
-  margin:10px 0;
-  color:#ffecec;
-}
+.feedback{font-size:15px;color:#ffecec}
 
 button{
   padding:12px 22px;
@@ -43,20 +49,16 @@ button{
   font-size:16px;
   margin:8px;
   cursor:pointer;
-  transition:0.3s;
+  transition:.3s;
 }
 .primary{background:#00ff9d;color:#000}
 .secondary{background:#fff;color:#000}
+.glow{box-shadow:0 0 20px #00ff9d}
 
-img{
-  width:200px;
-  border-radius:20px;
-  margin-bottom:12px;
-}
-
+img{width:200px;border-radius:20px;margin-bottom:12px}
 input[type=range]{width:100%}
 
-.shake{animation:shake 0.4s}
+.shake{animation:shake .4s}
 @keyframes shake{
   0%{transform:translateX(0)}
   25%{transform:translateX(-5px)}
@@ -64,15 +66,18 @@ input[type=range]{width:100%}
   75%{transform:translateX(-5px)}
   100%{transform:translateX(0)}
 }
-
-.glow{box-shadow:0 0 20px #00ff9d}
 </style>
 </head>
 
 <body>
 
+<!-- 💘 VALENTINE WEEK TIMELINE -->
+<div class="timeline" id="timeline">
+  <h3>💘 Our Valentine Journey 💘</h3>
+</div>
+
 <audio id="music" loop>
-  <source src="{{ url_for('static', filename='music.mp3') }}" type="audio/mp3">
+  <source src="static/music.mp3" type="audio/mp3">
 </audio>
 
 <!-- SCREEN 1 -->
@@ -84,7 +89,7 @@ input[type=range]{width:100%}
 
 <!-- SCREEN 2 -->
 <div class="card hidden" id="s2">
-  <img src="{{ url_for('static', filename='photo.jpg') }}">
+  <img src="static/photo.jpg">
   <p>How much do you love me? 😌</p>
   <input type="range" min="0" max="100" value="50" id="loveRange">
   <p id="rangeText">50%</p>
@@ -105,68 +110,93 @@ input[type=range]{width:100%}
 <div class="card hidden" id="s4">
   <h1>Will you be my Valentine? 💍</h1>
   <div class="feedback" id="valFeedback"></div>
-  <button id="yes" class="primary glow" onclick="go5()">YES 💖</button>
-  <button id="no" class="secondary" onclick="shakeNo()">NO 🙈</button>
+  <button class="primary glow" onclick="go5()">YES 💖</button>
+  <button class="secondary" id="no" onclick="shakeNo()">NO 🙈</button>
 </div>
 
 <!-- SCREEN 5 -->
 <div class="card hidden" id="s5">
   <h1>💝 I Love You 💝</h1>
   <video width="100%" controls autoplay>
-    <source src="{{ url_for('static', filename='video.MP4') }}" type="video/mp4">
+    <source src="static/video.MP4" type="video/mp4">
   </video>
   <p>You just made my heart the happiest ❤️</p>
 </div>
 
 <script>
-const range = document.getElementById("loveRange");
-const text = document.getElementById("rangeText");
-const feedback = document.getElementById("rangeFeedback");
+/* 💘 Valentine Week Auto Timeline */
+const today=new Date();
+const d=today.getDate();
+const m=today.getMonth(); // Feb = 1
+const timeline=document.getElementById("timeline");
 
-range.oninput = () => {
-  text.innerText = range.value + "%";
-  if(range.value < 40) feedback.innerText = "Hmm… I expected more 😏";
-  else if(range.value < 70) feedback.innerText = "Okay okay… that’s sweet 😊";
-  else if(range.value < 90) feedback.innerText = "Awww, that’s a lot of love ❤️";
-  else feedback.innerText = "OMG 😭 I’m the luckiest!";
+const days=[
+ {day:7,text:"🌹 <b>Rose Day</b> – A rose for the most beautiful soul ❤️"},
+ {day:8,text:"💍 <b>Propose Day</b> – I choose you, always 💖"},
+ {day:9,text:"🍫 <b>Chocolate Day</b> – Sweeter than chocolate 😋"},
+ {day:10,text:"🧸 <b>Teddy Day</b> – <img src='static/teddy.png' width='50'><br>This teddy hugs you 🤗"},
+ {day:11,text:"🤝 <b>Promise Day</b> – I promise you forever 💍"},
+ {day:12,text:"🤗 <b>Hug Day</b> – Tight virtual hug ❤️"},
+ {day:13,text:"😘 <b>Kiss Day</b> – A kiss sealed with love 💋"},
+ {day:14,text:"❤️ <b>Valentine’s Day</b> – You are my everything 💝"}
+];
+
+if(m===1){
+ days.forEach(i=>{
+  if(d>=i.day){
+   const div=document.createElement("div");
+   div.className="day";
+   div.innerHTML=i.text;
+   timeline.appendChild(div);
+  }
+ });
+}
+
+/* 🎚️ Slider feedback */
+const range=document.getElementById("loveRange");
+const rangeText=document.getElementById("rangeText");
+const rangeFeedback=document.getElementById("rangeFeedback");
+
+range.oninput=()=>{
+ rangeText.innerText=range.value+"%";
+ if(range.value<40) rangeFeedback.innerText="Hmm… I expected more 😏";
+ else if(range.value<70) rangeFeedback.innerText="Okay okay… that’s sweet 😊";
+ else if(range.value<90) rangeFeedback.innerText="Awww 😍 that’s a lot of love!";
+ else rangeFeedback.innerText="OMG 😭 I’m the luckiest!";
 };
 
+/* 🧠 Flow control */
 function hideAll(){
-  document.querySelectorAll(".card").forEach(c=>c.classList.add("hidden"));
+ document.querySelectorAll(".card").forEach(c=>c.classList.add("hidden"));
 }
+function go2(){music.play();hideAll();s2.classList.remove("hidden");}
+function go3(){hideAll();s3.classList.remove("hidden");}
 
-function go2(){
-  document.getElementById("music").play();
-  hideAll(); s2.classList.remove("hidden");
-}
-
-function go3(){
-  hideAll(); s3.classList.remove("hidden");
-}
-
+/* 😏 Choice feedback */
 function chooseGood(choice){
-  document.getElementById("choiceFeedback").innerText =
-    choice === "Forever"
-    ? "Forever with you? Perfect answer 😍"
-    : "Always sounds romantic… I like it ❤️";
-  setTimeout(()=>{ hideAll(); s4.classList.remove("hidden"); },1200);
+ const f=document.getElementById("choiceFeedback");
+ f.innerText=choice==="Forever"
+  ?"Forever with you? Perfect answer 😍"
+  :"Always sounds romantic… I like it ❤️";
+ setTimeout(()=>{hideAll();s4.classList.remove("hidden");},1200);
 }
-
 function chooseBad(){
-  document.getElementById("choiceFeedback").innerText =
-    "Hmm?? 😤 Wrong option… try again!";
+ document.getElementById("choiceFeedback").innerText=
+ "Hmm?? 😤 Wrong option… try again!";
 }
 
+/* 🙈 NO tease */
 function shakeNo(){
-  const no = document.getElementById("no");
-  no.classList.add("shake");
-  document.getElementById("valFeedback").innerText =
-    "Heyyy 😳 don’t tease me like that!";
-  setTimeout(()=>no.classList.remove("shake"),400);
+ const no=document.getElementById("no");
+ document.getElementById("valFeedback").innerText=
+ "Heyyy 😳 don’t tease me like that!";
+ no.classList.add("shake");
+ setTimeout(()=>no.classList.remove("shake"),400);
 }
 
+/* 💖 YES */
 function go5(){
-  hideAll(); s5.classList.remove("hidden");
+ hideAll();s5.classList.remove("hidden");
 }
 </script>
 
